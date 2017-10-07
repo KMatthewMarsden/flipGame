@@ -6,19 +6,24 @@
 
 	<body>
 		<p id="money">Current Money: $10</p>
+		<p id="winnings">Winnings last bet: $0</p><br>
 		<p id="demo">0</p>
 		<p id="flipsDone">0</p>
 		<p id="heads">0</p>
 		<p id="tails">0</p><br>
-		Flip Selection: <select>
-		  <option value="volvo">Heads</option>
-		  <option value="saab">Tails</option>
+		Flip Selection: <select id="flipChoice">
+		  <option value="1">Heads</option>
+		  <option value="2">Tails</option>
 		</select><br>
-		Bet: <input type="text" name="gamble"><br>
-		<button onclick="getNew()">Flip!</button>
+		Bet: <input type="text" id="betAmount"><br>
+		<button onclick="getNew()" id="flipCoinBtn">Flip!</button><br>
+		<br>
+		<br>
+		<button onclick="newGame()">New Game</button>
 
 		<script>
 		var currentMoney = 10;
+		var bet = 0;
 		var coinFlip = 0;
 		var numberFlips = 0;
 		var numberHeads = 0;
@@ -27,22 +32,80 @@
 
 		function getNew() {
 
-			numberFlips++;
+			bet = document.getElementById("betAmount").value;
 
-			coinFlip = Math.floor((Math.random() * 2) + 1);
+			if(bet <= currentMoney)
+			{
+				currentMoney = currentMoney - bet;
+
+				numberFlips++;
+
+				coinFlip = Math.floor((Math.random() * 2) + 1);
+
+				selection = document.getElementById("flipChoice");
+				selection = selection.value;
+
+				
+
+				checkFlip();
+
+				currentMoney = currentMoney + bet;
+
+				updateBoard();
+
+				if(currentMoney <= 0)
+				{
+					document.getElementById("flipCoinBtn").disabled = true;
+				}
+			}
+			else 
+			{
+				window.alert("More money selected than money available");
+			}
+			
+		}
+		function checkFlip() {
 
 			if(coinFlip == 1)
 			{
 				document.getElementById("demo").innerHTML = "Result: Heads";
-				currentMoney++;
 				numberHeads++;
 			}
 			else if(coinFlip == 2)
 			{
 				document.getElementById("demo").innerHTML = "Result: Tails";
-				currentMoney--;
 				numberTails++;
 			}
+
+			if(selection == coinFlip)
+			{
+				bet = bet * 2;
+				document.getElementById("winnings").innerHTML = "Winnings last bet: $" + bet; 
+			}
+			else
+			{
+				bet = 0;
+				document.getElementById("winnings").innerHTML = "Winnings last bet: $" + bet;
+			}
+		}
+
+
+		function newGame() {
+			document.getElementById("flipCoinBtn").disabled = false;
+			currentMoney = 10;
+			bet = 0;
+			coinFlip = 0;
+			numberFlips = 0;
+			numberHeads = 0;
+			numberTails = 0;
+			selection = 0;
+
+			updateBoard();	
+
+		}
+
+		function updateBoard()
+		{
 
 			document.getElementById("heads").innerHTML = "No Heads: " + numberHeads;
 
@@ -50,8 +113,7 @@
 
 			document.getElementById("money").innerHTML = "Current Money: $" + currentMoney;
 
-			document.getElementById("flipsDone").innerHTML = "Number of Flips: " + numberFlips;	
-			
+			document.getElementById("flipsDone").innerHTML = "Number of Flips: " + numberFlips;
 		}
 		</script>
 	</body>
